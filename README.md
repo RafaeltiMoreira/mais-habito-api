@@ -1,6 +1,6 @@
-# 💑 Couple Challenge API
+# 🌟 Mais Hábito API
 
-> Uma API gamificada para casais competirem através de desafios e tarefas pontuadas
+> Uma API para gamificar a produtividade pessoal através de desafios e tarefas pontuadas
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20+-green)](https://nodejs.org/)
@@ -11,23 +11,16 @@
 
 ## 📋 Sobre o Projeto
 
-Couple Challenge é uma aplicação backend que permite casais criarem desafios com tarefas pontuadas, competirem de forma saudável e acompanharem o progresso através de um sistema de gamificação.
+O Mais Hábito é uma aplicação backend single-player que ajuda o usuário a organizar sua rotina diária e criar novos hábitos por meio de um sistema de recompensas em pontos, gamificando o progresso de suas metas.
 
 ### ✨ Funcionalidades Principais
 
-- 🔐 **Autenticação** - Sistema completo com JWT
-- 💑 **Gestão de Casais** - Convites, aceitar, recusar, sair
-- 🎯 **Desafios** - Criar desafios com períodos personalizados
-- ✅ **Tarefas** - CRUD completo de tarefas pontuadas
-- 🏆 **Pontuação** - Sistema de completions com cálculo automático de vencedor
-- 📊 **Histórico** - Acompanhe todos os desafios completados
-
----
-
-## 🚀 Demo
-
-**Status:** MVP Backend 100% Completo  
-**Deploy:** Em breve (Fase 3 do roadmap)
+- 🔐 **Autenticação** - Sistema completo com JWT e criptografia bcrypt
+- 👤 **Perfis de Usuário** - Gerenciamento de conta, pontos, XP, sequências (streaks)
+- 🎯 **Catálogo de Desafios** - Criação de modelos de desafios (Challenge Templates)
+- 🏃 **Desafios Ativos** - Assuma desafios do catálogo, registre anotações de progresso e complete metas
+- ✅ **Tarefas e Rotinas** - CRUD completo para planejamento diário livre de restrições
+- 🏆 **Gamificação** - Ganhe pontos ao concluir desafios/tarefas e mantenha as chamas da sequência
 
 ---
 
@@ -35,202 +28,66 @@ Couple Challenge é uma aplicação backend que permite casais criarem desafios 
 
 ### Core
 - **Node.js** - Runtime JavaScript
-- **TypeScript** - Linguagem com tipagem estática
-- **Express 5** - Framework web minimalista
+- **TypeScript** - Linguagem com tipagem superset
+- **Express 5** - Framework web backend
 
 ### Database
-- **PostgreSQL 16** - Banco de dados relacional
-- **Knex.js** - Query builder e migrations
-- **Docker** - PostgreSQL containerizado
+- **PostgreSQL** - Banco de dados relacional robusto
+- **Knex.js** - Migrations e Query Builder
+- **pg** - Driver para PostgreSQL
 
-### Autenticação & Segurança
-- **bcrypt** - Hash de senhas
-- **jsonwebtoken** - Tokens JWT
-- **Prepared Statements** - Proteção contra SQL Injection
-
-### Desenvolvimento
-- **ts-node** - Execução TypeScript em desenvolvimento
-- **nodemon** - Hot reload automático
-- **dotenv** - Gerenciamento de variáveis de ambiente
+### Segurança & Infra
+- **jsonwebtoken** / **bcrypt** - Segurança de Autenticação
+- **node-cron** - Jobs agendados (cálculo de sequências/streaks)
+- **cors**, **dotenv** - Configuração e segurança de rede
 
 ---
 
-## 📁 Estrutura do Projeto
+## 🚀 Como Iniciar
 
-```
-couple-challenge-api/
-├── src/
-│   ├── config/           # Configurações (env, etc)
-│   ├── database/         # Knex, migrations
-│   ├── models/           # Interfaces TypeScript (DB models)
-│   ├── dtos/             # Data Transfer Objects
-│   ├── types/            # Type extensions
-│   ├── errors/           # Custom error classes
-│   ├── repositories/     # Acesso ao banco (SQL raw)
-│   ├── services/         # Lógica de negócio
-│   ├── controllers/      # HTTP handlers
-│   ├── middlewares/      # Express middlewares
-│   ├── routes/           # Definição de endpoints
-│   └── index.ts          # Entry point
-├── .env.example          # Template de variáveis
-├── .gitignore
-├── package.json
-├── tsconfig.json
-└── README.md
-```
+1. Clone o repositório (`git clone https://github.com/RafaeltiMoreira/mais-habito-api.git`)
+2. Renomeie o arquivo `.env.example` para `.env` e preencha as variáveis de ambiente (Credenciais do PostgreSQL, chave do JWT, etc.)
+3. Instale as dependências:
+   ```bash
+   npm install
+   ```
+4. Execute as migrations no banco de dados para criar as tabelas:
+   ```bash
+   npm run migrate:dev
+   ```
+5. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
+
+A API estará rodando tipicamente em `http://localhost:3000`.
 
 ---
 
-## 🔌 API Endpoints
+## 🔌 Principais Endpoints
 
-### Autenticação
-
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/api/auth/signup` | Criar conta |
-| POST | `/api/auth/login` | Autenticar usuário |
-
-### Usuário
-
-| Método | Endpoint | Descrição | Auth |
-|--------|----------|-----------|------|
-| GET | `/api/user/profile` | Ver perfil | ✅ |
-| PUT | `/api/user/profile` | Atualizar perfil | ✅ |
-
-### Casais
-
-| Método | Endpoint | Descrição | Auth |
-|--------|----------|-----------|------|
-| POST | `/api/couples` | Criar casal (enviar convite) | ✅ |
-| GET | `/api/couples/invites` | Listar convites recebidos | ✅ |
-| GET | `/api/couples/me` | Ver dados do casal | ✅ |
-| GET | `/api/couples/me/pending` | Ver convite pendente enviado | ✅ |
-| PUT | `/api/couples/:id/accept` | Aceitar convite | ✅ |
-| PUT | `/api/couples/:id/decline` | Recusar convite | ✅ |
-| DELETE | `/api/couples/:id` | Cancelar convite | ✅ |
-| DELETE | `/api/couples/me` | Sair do casal | ✅ |
-
-### Desafios
-
-| Método | Endpoint | Descrição | Auth |
-|--------|----------|-----------|------|
-| POST | `/api/challenges` | Criar desafio | ✅ |
-| GET | `/api/challenges` | Listar desafios | ✅ |
-| GET | `/api/challenges/active` | Ver desafio ativo | ✅ |
-| GET | `/api/challenges/:id/score` | Ver pontuação atual do desafio | ✅ |
-| PUT | `/api/challenges/:id/finish` | Finalizar desafio | ✅ |
-
-### Tasks
-
-| Método | Endpoint | Descrição | Auth |
-|--------|----------|-----------|------|
-| POST | `/api/tasks` | Criar task | ✅ |
-| GET | `/api/challenges/:id/tasks` | Listar tasks do desafio | ✅ |
-| PUT | `/api/tasks/:id` | Atualizar task | ✅ |
-| DELETE | `/api/tasks/:id` | Deletar task | ✅ |
-
-### Completions
-
-| Método | Endpoint | Descrição | Auth |
-|--------|----------|-----------|------|
-| POST | `/api/task-completions` | Completar task | ✅ |
+- **`/api/auth`** - Login e Criação de Conta
+- **`/api/user`** - Leitura e Atualização de Perfil de Usuário
+- **`/api/challenge-templates`** - Catálogo de Desafios Modelos (CRUD)
+- **`/api/user-challenges`** - Aceitar, Finalizar, Abandonar ou Salvar Notas
+- **`/api/tasks`** - Sistema de planejamento diário ou tarefas avulsas (CRUD)
+- **`/api/task-completions`** - Endpoint chave para ganho de XP/Pontos
 
 ---
 
 ## 🏗️ Arquitetura
 
-### Padrão de Camadas
+O projeto foi organizado com foco em escalabilidade e manutenção simples utilizando o **padrão Controller-Service-Repository**:
 
-```
-HTTP Request → Routes → Middleware → Controller → Service → Repository → Database
-                  ↓                                                           ↓
-            Error Handler ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ←
-```
-
-### Separação de Responsabilidades
-
-- **Routes:** Definição de endpoints e middlewares
-- **Middlewares:** Autenticação, error handling
-- **Controllers:** Extração de dados HTTP, chamada de services
-- **Services:** Lógica de negócio, validações, orquestração
-- **Repositories:** Acesso ao banco de dados (SQL raw)
-
----
-
-## 🔐 Segurança
-
-### Implementado ✅
-- ✅ Hash de senhas com bcrypt (10 salt rounds)
-- ✅ JWT tokens (expiração 30 dias)
-- ✅ Prepared statements (proteção SQL Injection)
-- ✅ Validação de ownership (autorização)
-- ✅ Mensagens de erro genéricas
-- ✅ TypeScript strict mode
-
-### Planejado ⏳
-- ⏳ Refresh tokens
-- ⏳ Rate limiting
-- ⏳ 2FA
-- ⏳ CORS configurado
-- ⏳ Helmet.js
-
----
-
-## 🗺️ Roadmap
-
-### ✅ Fase 1 - MVP Backend (COMPLETO)
-- [x] Auth Feature
-- [x] User Feature
-- [x] Couples Feature (7 endpoints)
-- [x] Challenges Feature (4 endpoints)
-- [x] Tasks Feature (4 endpoints)
-- [x] Task Completions Feature
-
-### 🔄 Fase 2 - MVP Frontend
-- [ ] Setup React + Design System
-- [ ] Autenticação UI
-- [ ] Gestão de Casais
-- [ ] Desafios e Tasks
-- [ ] Dashboard
-
-### 🚀 Fase 3 - Deploy Beta
-- [ ] Deploy Backend (Railway/Heroku)
-- [ ] Deploy Frontend (Vercel)
-- [ ] Banco em nuvem
-- [ ] Monitoramento básico
-
-### ⚡ Fase 4 - Features Avançadas
-- [ ] Upload de imagens (S3/Cloudinary)
-- [ ] Gamificação (badges, níveis)
-- [ ] Notificações
-- [ ] Timeline/Histórico
-
-### 🧪 Fase 5+ - Qualidade & Escala
-- [ ] Testes automatizados
-- [ ] CI/CD
-- [ ] Logs estruturados
-- [ ] Kubernetes (se necessário)
-
-
-### Padrão de Commits (Gitmoji)
-
-- `✨ ` - Nova funcionalidade
-- `🐛 ` - Correção de bug
-- `📝 ` - Documentação
-- `♻️ ` - Refatoração
-- `🔧 ` - Configuração/manutenção
+- **Rotas:** Mapeamento de endpoints para Controllers
+- **Middlewares:** Triagem de autenticação (`ensureAuthenticated`), parser de erros
+- **Controllers:** Recepção do `req/res`, validação básica de parâmetros payload
+- **Services:** Camada principal de regras de negócio (Validação de limites, gamificação)
+- **Repositories:** Transações puras com o Knex.js, isolando a API principal de mudanças de BD
 
 ---
 
 ## 👨‍💻 Autor
 
-**Gabriel Freire**
-
-- GitHub: [@gafreire](https://github.com/gafreire)
-- LinkedIn: [Gabriel Freire](https://www.linkedin.com/in/gabriel-freire-fumes/)
-
----
-
-<p align="center">
-  Feito com ❤️ por Gabriel Freire
-</p>
+**Rafael Moreira**
+- GitHub: [@RafaeltiMoreira](https://github.com/RafaeltiMoreira)
