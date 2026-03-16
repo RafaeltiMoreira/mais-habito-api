@@ -91,3 +91,4 @@ O projeto foi organizado com foco em escalabilidade e manutenção simples utili
 
 **Rafael Moreira**
 - GitHub: [@RafaeltiMoreira](https://github.com/RafaeltiMoreira)
+- Linkedin: [Rafael Moreira](https://www.linkedin.com/in/rafael-moreira-ti/)
