@@ -1,7 +1,7 @@
 {
   "name": "mais-habito-api",
   "version": "1.0.0",
-  "description": "Backend API for Solo Challenge - Node.js + TypeScript + PostgreSQL",
+  "description": "Backend API - Node.js + TypeScript + PostgreSQL",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --exec ts-node src/index.ts",
