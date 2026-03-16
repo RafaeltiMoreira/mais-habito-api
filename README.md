@@ -1,4 +1,4 @@
-# 🌟 Mais Hábito API
+# 🌟 Mais Hábito - API
 
 > Uma API para gamificar a produtividade pessoal através de desafios e tarefas pontuadas
 
