@@ -42,6 +42,23 @@ export const taskCompletionRepository = {
     return result.rows;
   },
 
+  async findByUserAndTaskToday(userId: string, taskId: number): Promise<TaskCompletion | null> {
+    const result = await db.raw(
+      `
+      SELECT * FROM task_completions
+      WHERE user_id = ?
+      AND task_id = ?
+      AND completed_at >= CURRENT_DATE
+      AND completed_at < CURRENT_DATE + INTERVAL '1 day'
+      ORDER BY completed_at DESC
+      LIMIT 1
+    `,
+      [userId, taskId]
+    );
+
+    return result.rows[0] || null;
+  },
+
   async delete(id: number): Promise<boolean> {
     const result = await db.raw(`DELETE FROM task_completions WHERE id = ? RETURNING id`, [id]);
     return result.rows.length > 0;

@@ -6,13 +6,25 @@ import { userRepository } from "../repositories/userRepository";
 export const taskCompletionService = {
   async completeTask(
     userId: string,
-    data: { task_id: number; },
+    data: { task_id: number },
   ) {
     const { task_id } = data;
 
+    if (!Number.isInteger(task_id) || task_id <= 0) {
+      throw new BadRequestError("ID da tarefa inválido");
+    }
+
     const task = await taskRepository.findById(task_id);
-    if (!task) throw new NotFoundError("Task not found");
-    if (task.user_id !== userId) throw new BadRequestError("This task doesn't belong to you");
+    if (!task) throw new NotFoundError("Tarefa não encontrada");
+    if (task.user_id !== userId) throw new BadRequestError("Esta tarefa não pertence a você");
+
+    const duplicatedCompletion = await taskCompletionRepository.findByUserAndTaskToday(
+      userId,
+      task_id,
+    );
+    if (duplicatedCompletion) {
+      throw new BadRequestError("Tarefa já concluída hoje");
+    }
 
     const todayCompletions = await taskCompletionRepository.findByUserIdToday(userId);
     const hasCompletedToday = todayCompletions.length > 0;
@@ -23,27 +35,27 @@ export const taskCompletionService = {
     });
 
     const user = await userRepository.findById(userId);
-    if (user) {
-        let newStreak = user.current_streak;
-        let maxStreak = user.max_streak;
-        
-        // If they hadn't completed any task today yet, bump streak 
-        // Note: checking consecutive days ideally requires looking at yesterday's completions.
-        // For gamification simplicity at real-time completion, we increment if this is the FIRST task of the day.
-        // An overnight CRON JOB evaluates if they LOST the streak.
-        if (!hasCompletedToday) {
-            newStreak += 1;
-            if (newStreak > maxStreak) {
-                maxStreak = newStreak;
-            }
-        }
+    if (!user) throw new NotFoundError("Usuário não encontrado");
 
-        await userRepository.update(userId, {
-            points: user.points + task.points,
-            current_streak: newStreak,
-            max_streak: maxStreak
-        });
+    let newStreak = user.current_streak;
+    let maxStreak = user.max_streak;
+
+    // If they hadn't completed any task today yet, bump streak
+    // Note: checking consecutive days ideally requires looking at yesterday's completions.
+    // For gamification simplicity at real-time completion, we increment if this is the FIRST task of the day.
+    // An overnight CRON JOB evaluates if they LOST the streak.
+    if (!hasCompletedToday) {
+      newStreak += 1;
+      if (newStreak > maxStreak) {
+        maxStreak = newStreak;
+      }
     }
+
+    await userRepository.update(userId, {
+      points: user.points + task.points,
+      current_streak: newStreak,
+      max_streak: maxStreak,
+    });
 
     return completion;
   },

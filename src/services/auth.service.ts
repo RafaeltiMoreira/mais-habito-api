@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { userRepository } from "../repositories/userRepository";
 import { userAuthProviderRepository } from "../repositories/userAuthProviderRepository";
 import { config } from "../config/env";
-import { BadRequestError, UnauthorizedError } from "../errors/AppError";
+import { BadRequestError, NotFoundError, UnauthorizedError } from "../errors/AppError";
 
 export interface JwtPayload {
   userId: string;
@@ -67,7 +67,7 @@ export const authService = {
     if (!isMatch) throw new UnauthorizedError(INVALID_CREDENTIALS)
 
     const user = await userRepository.findById(authProvider.user_id);
-    if(!user) throw new Error("User not found");
+    if (!user) throw new NotFoundError("User not found");
 
     const token = jwt.sign(
       {
