@@ -22,7 +22,7 @@ const knexConfig: Knex.Config = {
     ssl: isProd ? { rejectUnauthorized: false } : false,
   },
   pool: {
-    min: 2,
+    min: 0,
     max: 10
   },
   migrations: {
